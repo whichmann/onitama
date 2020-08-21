@@ -1,7 +1,7 @@
 import React from 'react'
 
 const ActivePlayersCards = () => {
-    return ( <div>Karty aktywnego gracza</div> );
+    return ( <div>Active player cards</div> );
 }
  
 export default ActivePlayersCards;
