@@ -4,28 +4,25 @@ body {
 
 .App {
     margin: auto;
-    width: 50%;
+    width: 60%;
     /* border: 3px solid green; */
     padding: 10px;
 }
 
 .board-game>tr>td {
-    margin: auto;
-    width: 50%;
-    height: 120px;
-    width: 120px;
+    height: 50px;
+    width: 50px;
     border: solid #777171;
     text-align: center;
 }
 
 table {
     margin: auto;
-    width: 50%;
 }
 
 .coffee-container {
     position: absolute;
-    bottom: 10px;
+    bottom: 20px;
     right: 10px;
     transform: translate(-35%, -10%);
 }
