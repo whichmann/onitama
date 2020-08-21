@@ -2,11 +2,25 @@ body {
     margin: 0px;
 }
 
+.App {
+    margin: auto;
+    width: 50%;
+    /* border: 3px solid green; */
+    padding: 10px;
+}
+
 .board-game>tr>td {
-    height: 50px;
-    width: 50px;
+    margin: auto;
+    width: 50%;
+    height: 120px;
+    width: 120px;
     border: solid #777171;
     text-align: center;
+}
+
+table {
+    margin: auto;
+    width: 50%;
 }
 
 .coffee-container {
