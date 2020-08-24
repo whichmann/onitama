@@ -1,7 +1,7 @@
 import React from 'react'
 import Tile from './Tile'
 
-const Board = ({ currentBoard, handleTileClick }) => {
+const Board = ({ currentBoard, selectedTiles, handleTileClick }) => {
 
     return (
         <table>
@@ -9,7 +9,7 @@ const Board = ({ currentBoard, handleTileClick }) => {
                 {[...Array(5)].map((i, trIndex) =>
                     <tr key={i}>
                         {[...Array(5)].map((j, tileIndex) =>
-                            <Tile handleTileClick={handleTileClick} key={(trIndex * 5) + tileIndex} tileIndex={(trIndex * 5) + tileIndex} tileInfo={currentBoard[(trIndex * 5) + tileIndex]}></Tile>
+                            <Tile selectedTiles={selectedTiles} handleTileClick={handleTileClick} key={(trIndex * 5) + tileIndex} tileIndex={(trIndex * 5) + tileIndex} tileInfo={currentBoard[(trIndex * 5) + tileIndex]}></Tile>
                         )}
                     </tr>
                 )}

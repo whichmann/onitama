@@ -7,7 +7,15 @@ import ScoreBoard from './ScoreBoard';
 
 
 const Game = () => {
-    const [activePlayer, setActivePlayer] = useState("🎅🏽")
+    const [activePlayer, setActivePlayer] = useState("🎅🏽");
+    const [selectedPawn, setSelectedPawn] = useState(null);
+    const [selectedTiles, setSelectedTiles] = useState([
+        "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed",
+        "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed",
+        "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed",
+        "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed",
+        "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed", "no-movement-allowed",
+    ]);
     const [history, setHistory] = useState([{
         board: [
             "🎅🏽", "🎅🏽", "🎅🏽", "🎅🏽", "🎅🏽",
@@ -27,14 +35,45 @@ const Game = () => {
     const [currentBoard, setCurrentBoard] = useState(history[0].board);
     const isInitialMount = useRef(true);
 
+    const handlePawnClick = (clickedPawnIndex) => {
+        if (clickedPawnIndex === selectedPawn) {
+            setSelectedPawn(null);
+            setSelectedTiles(Array(25).fill("no-movement-allowed"));
+        } else {
+            let tileClassesStart = (activePlayer === "🎅🏽" ? selectedTiles.slice(0, clickedPawnIndex) : selectedTiles.slice(0, clickedPawnIndex-5));
+            let tileClassesBetween = (activePlayer === "🎅🏽" ? selectedTiles.slice(clickedPawnIndex+1, clickedPawnIndex + 5) : selectedTiles.slice(clickedPawnIndex-4,clickedPawnIndex));
+            let tileClassesEnd = (activePlayer === "🎅🏽" ? selectedTiles.slice(clickedPawnIndex + 6, 25) : selectedTiles.slice(clickedPawnIndex+1,25));
+
+            let newTileClasses = (activePlayer === "🎅🏽" ? tileClassesStart.concat("active-pawn",tileClassesBetween,"movement-allowed", tileClassesEnd) : tileClassesStart.concat("movement-allowed",tileClassesBetween,"active-pawn",tileClassesEnd));
+
+            setSelectedTiles(newTileClasses);
+            setSelectedPawn(clickedPawnIndex);
+        }
+    }
+
+    const handlePawnMovement = (movedPawnIndex, destinationTileIndex) => {
+        let beginningBoard = (activePlayer === "🎅🏽" ? currentBoard.slice(0, movedPawnIndex) : currentBoard.slice(0, destinationTileIndex));
+        let betweenBoard = (activePlayer === "🎅🏽" ? currentBoard.slice(movedPawnIndex+1, destinationTileIndex) : currentBoard.slice(destinationTileIndex+1,movedPawnIndex));
+        let endBoard = (activePlayer === "🎅🏽" ? currentBoard.slice(destinationTileIndex+1, 25) : currentBoard.slice(movedPawnIndex+1,25));
+
+        let newBoard = (activePlayer === "🎅🏽" ? beginningBoard.concat("",betweenBoard,activePlayer, endBoard) : beginningBoard.concat(activePlayer,betweenBoard,"",endBoard));
+        setHistory([...history, { board: newBoard }]);
+    }
+
     const handleTileClick = (i) => {
-        if (currentBoard[i] === activePlayer && ((activePlayer === "🎅🏽" && i < 20) || (activePlayer !== "🎅🏽" && i > 4))) {
+        if (!selectedPawn && currentBoard[i] === activePlayer) {
+            handlePawnClick(i);
+            return;
+        } else if (selectedPawn === i) {
+            setSelectedTiles(Array(25).fill("no-movement-allowed"));
+            setSelectedPawn(null);
+            return;
+        } else if (selectedTiles[i] === "movement-allowed") {
+            handlePawnMovement(selectedPawn, i);            
+            setSelectedTiles(Array(25).fill("no-movement-allowed"));
+            setSelectedPawn(null);
             activePlayer === "🎅🏽" ? setActivePlayer("🕵🏽‍♀️") : setActivePlayer("🎅🏽");
-            let beginningBoard = (activePlayer === "🎅🏽" ? currentBoard.slice(0, i) : currentBoard.slice(0, i-5));
-            let betweenBoard = (activePlayer === "🎅🏽" ? currentBoard.slice(i + 1, i + 5) : currentBoard.slice(i-4,i));
-            let endBoard = (activePlayer === "🎅🏽" ? currentBoard.slice(i + 6, 25) : currentBoard.slice(i+1,25));
-            let newBoard = (activePlayer === "🎅🏽" ? beginningBoard.concat("", betweenBoard, activePlayer, endBoard) : beginningBoard.concat(activePlayer,betweenBoard,"",endBoard));
-            setHistory([...history, { board: newBoard }]);
+            return;
         }
     }
 
@@ -49,9 +88,9 @@ const Game = () => {
     return (
         <div>
             <h3>Active Player: {activePlayer}</h3>
-            <button onClick={() => { setHistory([...history, { board: history[0].board }]) }}>Reset the board</button>
+            <button onClick={() => { setHistory([...history, { board: history[0].board }]); setSelectedTiles(Array(25).fill("no-movement-allowed")) }}>Reset the board</button>
             <NonActivePlayerCards></NonActivePlayerCards>
-            <Board handleTileClick={handleTileClick} currentBoard={currentBoard}></Board>
+            <Board selectedTiles={selectedTiles} handleTileClick={handleTileClick} currentBoard={currentBoard}></Board>
             <ScoreBoard></ScoreBoard>
             <ActivePlayerCards></ActivePlayerCards>
         </div>
