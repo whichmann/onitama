@@ -9,10 +9,21 @@ body {
     padding: 10px;
 }
 
+.no-movement-allowed {
+    border: 1px solid #777171;
+}
+
+.movement-allowed {
+    border: 2px dotted red !important;
+}
+
+.active-pawn {
+    border: 4px dotted blue !important;
+}
+
 .board-game>tr>td {
     height: 50px;
     width: 50px;
-    border: solid #777171;
     text-align: center;
 }
 
