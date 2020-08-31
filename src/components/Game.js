@@ -61,7 +61,7 @@ const Game = () => {
     }
 
     const handleTileClick = (i) => {
-        if (!selectedPawn && currentBoard[i] === activePlayer) {
+        if (selectedPawn === null && currentBoard[i] === activePlayer) {
             handlePawnClick(i);
             return;
         } else if (selectedPawn === i) {
@@ -88,7 +88,7 @@ const Game = () => {
     return (
         <div>
             <h3>Active Player: {activePlayer}</h3>
-            <button onClick={() => { setHistory([...history, { board: history[0].board }]); setSelectedTiles(Array(25).fill("no-movement-allowed")) }}>Reset the board</button>
+            <button onClick={() => { setHistory([...history, { board: history[0].board }]); setSelectedPawn(null); setActivePlayer("🎅🏽"); setSelectedTiles(Array(25).fill("no-movement-allowed")) }}>Reset the board</button>
             <NonActivePlayerCards></NonActivePlayerCards>
             <Board selectedTiles={selectedTiles} handleTileClick={handleTileClick} currentBoard={currentBoard}></Board>
             <ScoreBoard></ScoreBoard>
