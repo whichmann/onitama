@@ -1,13 +1,13 @@
 import React from 'react'
 
-const Cards = ({ cards, activePlayer }) => {
+const Cards = ({ cards, activePlayer, handleCardClick }) => {
     console.log(cards);
     return (
         <>
             <h1>{activePlayer} cards</h1>
             <ul>
-                <li>{cards[0][0]}</li>
-                <li>{cards[1][0]}</li>
+                <li onClick={() => { handleCardClick(0) }}>{cards[0][1]}</li>
+                <li onClick={() => { handleCardClick(1) }}>{cards[1][1]}</li>
             </ul>
         </>
     )

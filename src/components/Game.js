@@ -7,11 +7,11 @@ import ScoreBoard from './ScoreBoard';
 
 const Game = () => {
 
-    const cardA = ["Flying Tiger", 0, 2, 4];
-    const cardB = ["Hidden Dragon", 0, 1, 4];
-    const cardC = ["Jumping Norek", 0, 3, 4];
-    const cardD = ["Ducking Duck", 0, 1, 4];
-    const cardE = ["Obese Goose", 0, 2, 2];
+    const cardA = [1, "Flying Tiger", 0, 2, 4];
+    const cardB = [2, "Hidden Dragon", 0, 1, 4];
+    const cardC = [3, "Jumping Norek", 0, 3, 4];
+    const cardD = [4, "Ducking Duck", 0, 1, 4];
+    const cardE = [5, "Obese Goose", 0, 2, 2];
 
     const [activePlayer, setActivePlayer] = useState("🎅🏽");
     const [selectedPawn, setSelectedPawn] = useState(null);
@@ -33,12 +33,42 @@ const Game = () => {
         // ]
     }]);
     const [cards, setCards] = useState({
-        playerOneCards: [cardA, cardB], playerTwoCards: [cardC, cardD], inactiveCard: [cardE]
+        playerOneCards: [cardA, cardB],
+        playerTwoCards: [cardC, cardD],
+        inactiveCard: cardE
     })
 
 
     const [currentBoard, setCurrentBoard] = useState(history[0].board);
     const isInitialMount = useRef(true);
+
+    const handleCardClick = (clickedCardId) => {
+        let newActiveCard = cards.inactiveCard;
+        let newInactiveCard = activePlayer === "🎅🏽" ? cards.playerOneCards[clickedCardId] : cards.playerTwoCards[clickedCardId];
+        let firstCard;
+        let secondCard;
+        let newCardSet;
+        if (activePlayer === "🎅🏽") {
+            firstCard = cards.playerOneCards[0] === newInactiveCard ? newActiveCard : cards.playerOneCards[0]
+            secondCard = cards.playerOneCards[1] === newInactiveCard ? newActiveCard : cards.playerOneCards[1]
+            newCardSet = {
+                playerOneCards: [firstCard, secondCard],
+                playerTwoCards: [cards.playerTwoCards[0], cards.playerTwoCards[1]],
+                inactiveCard: newInactiveCard
+            }
+        } else {
+            firstCard = cards.playerTwoCards[0] === newInactiveCard ? newActiveCard : cards.playerTwoCards[0]
+            secondCard = cards.playerTwoCards[1] === newInactiveCard ? newActiveCard : cards.playerTwoCards[1]
+            newCardSet = {
+                playerOneCards: [cards.playerOneCards[0], cards.playerOneCards[1]],
+                playerTwoCards: [firstCard, secondCard],
+                inactiveCard: newInactiveCard
+            }
+        }
+
+
+        setCards(newCardSet);
+    }
 
     const handlePawnClick = (clickedPawnIndex) => {
         if (clickedPawnIndex === selectedPawn) {
@@ -94,10 +124,11 @@ const Game = () => {
         <div>
             <h3>Active Player: {activePlayer}</h3>
             <button onClick={() => { setHistory([...history, { board: history[0].board }]); setSelectedPawn(null); setActivePlayer("🎅🏽"); setSelectedTiles(Array(25).fill("no-movement-allowed")) }}>Reset the board</button>
-            <Cards cards={cards.playerOneCards} activePlayer={"🎅🏽"}></Cards>
+            <Cards handleCardClick={handleCardClick} cards={cards.playerOneCards} activePlayer={"🎅🏽"}></Cards>
             <Board selectedTiles={selectedTiles} handleTileClick={handleTileClick} currentBoard={currentBoard}></Board>
             <ScoreBoard></ScoreBoard>
-            <Cards cards={cards.playerTwoCards} activePlayer={"🕵🏽‍♀️"}></Cards>
+            <div>Inactive Card: {cards.inactiveCard[1]}</div>
+            <Cards handleCardClick={handleCardClick} cards={cards.playerTwoCards} activePlayer={"🕵🏽‍♀️"}></Cards>
         </div>
     );
 }
